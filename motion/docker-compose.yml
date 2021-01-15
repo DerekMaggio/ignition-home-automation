@@ -1,0 +1,25 @@
+version: "2.4"
+
+services:
+  motion:
+    image: motion
+    container_name: motion
+    build:
+      context: ./
+    ports:
+     - "8080:8080"
+     - "8081:8081"
+    networks:
+      network:
+    volumes:
+     - ./cameras/:/usr/local/etc/motion/conf/cameras/:ro
+     - ./motion.conf:/usr/local/etc/motion/conf/motion.conf:ro
+     - ./recordings:/usr/local/etc/motion/recordings/
+    restart: always
+networks:
+  network:
+    name: "camera-network"
+    
+volumes:
+  recordings-folder:
+    name: recordings-folder
