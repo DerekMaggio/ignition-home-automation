@@ -1,2 +1,6 @@
 motion/cameras/
+motion/motion.conf
+ignition/licensing/
+credentials/
 *.modl
+*.crt
