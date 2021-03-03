@@ -1,0 +1,62 @@
+version: "3.8"
+
+services:
+    ignition:
+        build:
+            context: ./ignition/
+        container_name: ignition
+        environment: 
+            GATEWAY_ADMIN_PASSWORD: password
+            IGNITION_EDITION: MAKER
+            GATEWAY_SYSTEM_NAME: home-automation-server
+        image: ignition
+        networks:
+            home-automation-network:
+                aliases: 
+                    - ignition
+        ports:
+            - "8088:8088"
+        volumes:
+            - ignition-data:/var/lib/ignition/data
+            
+    zoneminder:
+        image: zoneminder
+        container_name: zoneminder
+        build:
+            context: ./zoneminder
+        networks:
+            home-automation-network:
+                aliases: 
+                    - zoneminder
+        environment:
+          TZ: America/New_York
+          PUID: 99
+          PGID: 100
+          MULTI_PORT_START: 0
+          MULTI_PORT_END: 0
+
+        ports:
+            - "8080:80/tcp"
+            - "8081:443/tcp"
+            - "9000:9000/tcp"
+            - "3306:3306/tcp"
+        volumes:
+         - zoneminder-config:/config:rw
+         - zoneminder-cache:/var/cache/zoneminder:rw
+
+        restart: always
+        privileged: false
+        shm_size: 16G
+
+networks:
+    home-automation-network:
+        name: "home-automation-network"
+        
+volumes:
+    ignition-data:
+        name: ignition-data
+    zoneminder-config:
+        name: zoneminder-config
+    zoneminder-cache:
+        name: zoneminder-cache
+
